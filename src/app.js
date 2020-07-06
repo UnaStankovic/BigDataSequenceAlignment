@@ -48,6 +48,7 @@ server.post('/query', async (req, res, next) => {
         } catch(err) {
             
         }
+        //function for sequence alignment, using map
         doc.views[query_id] = {
             "map": `function (doc) {
                 var querySequence = "${querySequence}";
@@ -88,6 +89,9 @@ server.post('/query', async (req, res, next) => {
                     }
                 }
                     emit(-max, doc.id);
+                }`,
+                "reduce" : `function (key, values, rereduce) {
+                    return Math.max.apply({}, values);
                 }`
         };
         console.log(doc);
