@@ -2,7 +2,7 @@
 const bioseq = require("bioseq");
 const { v4: uuidv4 } = require('uuid');
 
-const nano = require('nano')('http://admin:admin@192.168.0.13:5984/');
+const nano = require('nano')('http://admin:admin@192.168.0.14:5984/');
 const db = nano.db.use('test');
 const restify = require('restify');
 const server = restify.createServer();
@@ -89,10 +89,11 @@ server.post('/query', async (req, res, next) => {
                     }
                 }
                     emit(-max, doc.id);
-                }`,
-                "reduce" : `function (key, values, rereduce) {
-                    return Math.max.apply({}, values);
                 }`
+                // "reduce" : `function (key, values, rereduce) {
+                    //min because the values are negative
+                //     return Math.min.apply({}, values);
+                // }`
         };
         console.log(doc);
         const result = await db.insert(doc, '_design/queries');
@@ -106,19 +107,29 @@ server.post('/query', async (req, res, next) => {
 })
 
 server.get('/query/:jobId', (req, res, next) => {
-
-    const id = req.params.jobId;
-    //getting the view
-    db.view('queries', id, function(err, body) {
-        if (!err) {
-          res.send(body.rows);
-        }
-        else{
-            console.log(err);
-            res.send({message: 'error'});
-        }
-      });
-
+    const request = new Promise((resolve, reject)=>{
+        setTimeout(()=>{
+            res.send({message:"Pending..."});
+            resolve();
+        }, 10000);
+        const id = req.params.jobId;
+        //getting the view
+        db.view('queries', id, function(err, body) {
+            if (!err) {
+                resolve(body.rows);
+            }
+            else{
+                console.log(err);
+                reject({message: 'error'});
+            }
+        });
+    });
+    request.then((payload)=>{
+        res.send(payload);
+    }).catch((err)=>{
+        res.status(400);
+        res.send(err)
+    });
     next();
 })
 
