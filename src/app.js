@@ -3,7 +3,7 @@ const bioseq = require("bioseq");
 const { v4: uuidv4 } = require('uuid');
 
 const nano = require('nano')('http://admin:admin@192.168.0.13:5984/');
-const db = nano.db.use('sequences_data');
+const db = nano.db.use('test');
 const restify = require('restify');
 const server = restify.createServer();
 
@@ -51,7 +51,7 @@ server.post('/query', async (req, res, next) => {
         doc.views[query_id] = {
             "map": `function (doc) {
                 var querySequence = "${querySequence}";
-                var n = doc['sequence'].length + 1;
+                var n = doc[' sequence'].length + 1;
                 var m = querySequence.length + 1;
                 var matrix = [];
                 let max = 0
@@ -80,7 +80,7 @@ server.post('/query', async (req, res, next) => {
                         matrix[i][j] = maxf(
                             matrix[i - 1][j] - 1, 
                             matrix[i][j - 1] - 1, 
-                            matrix[i - 1][j - 1] + (querySequence[j - 1] === doc['sequence'][i - 1] ? 1 : 0),
+                            matrix[i - 1][j - 1] + (querySequence[j - 1] === doc[' sequence'][i - 1] ? 1 : 0),
                          0);
                         if (matrix[i][j] > max) {
                             max = matrix[i][j];
