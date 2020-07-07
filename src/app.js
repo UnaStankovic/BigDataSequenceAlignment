@@ -1,12 +1,24 @@
 //start with node app in terminal
-const bioseq = require("bioseq");
 const { v4: uuidv4 } = require('uuid');
 
-const nano = require('nano')('http://admin:admin@192.168.0.14:5984/');
+//Database 
+const nano = require('nano')('http://admin:admin@192.168.0.13:5984/');
 const db = nano.db.use('test');
+
 const restify = require('restify');
+//CORS
+
+const corsMiddleware = require('restify-cors-middleware');
+
+const cors = corsMiddleware({
+    preflightMaxAge: 5,
+    origins: ["*"],
+  });
+  
 const server = restify.createServer();
 
+server.pre(cors.preflight)
+server.use(cors.actual)
 server.use(restify.plugins.queryParser());
 server.use(restify.plugins.bodyParser());
 
@@ -50,7 +62,7 @@ server.post('/query', async (req, res, next) => {
         }
         //function for sequence alignment, using map
         doc.views[query_id] = {
-            "map": `function (doc) {
+            map: `function (doc) {
                 var querySequence = "${querySequence}";
                 var n = doc[' sequence'].length + 1;
                 var m = querySequence.length + 1;
@@ -88,12 +100,21 @@ server.post('/query', async (req, res, next) => {
                         }
                     }
                 }
-                    emit(-max, doc.id);
-                }`
-                // "reduce" : `function (key, values, rereduce) {
-                    //min because the values are negative
-                //     return Math.min.apply({}, values);
-                // }`
+                    //emit(-max, doc.id);
+                    emit(-max, { seq: doc.id, score: max});
+                }`,
+                reduce : `function (keys, values, rereduce) {
+                    //return values[0];
+                        const max = values[0].score;
+                        const maxI = 0;
+                        for (let i = 1; i < values.length; i += 1) {
+                          if (values[i].score > max) {
+                            max = values[i].score;
+                            maxI = i; 
+                          }
+                        }
+                        return values[0].score;
+                    }`
         };
         console.log(doc);
         const result = await db.insert(doc, '_design/queries');

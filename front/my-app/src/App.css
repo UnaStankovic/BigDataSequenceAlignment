@@ -1,0 +1,43 @@
+body {
+  background-color: #2a8260;
+  color: white;
+}
+
+.page-wrapper {
+  text-align: center;
+  background-image: url(img/aa2.png);
+  background-size: cover;
+  height: 100vh;
+}
+
+.page-wrapper .page-header {
+  border-bottom: 1px solid #0f422f;
+}
+
+.page-wrapper .content-wrapper .main-content textarea {
+  overflow: scroll;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.page-wrapper .content-wrapper .main-content .btn-wrap {
+  display: block;
+  width: 100px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid  #0f422f;
+  border-radius: 5px;
+  background-color: #2a8260;
+  color: white;
+}
+
+.page-wrapper .content-wrapper .main-content .btn-wrap:hover {
+  background-color: #60a389;
+  cursor: pointer;
+}
+
+.page-wrapper .content-wrapper .main-content .btn-wrap a {
+  text-decoration: none;
+  color: white;
+}
+/*# sourceMappingURL=App.css.map */
