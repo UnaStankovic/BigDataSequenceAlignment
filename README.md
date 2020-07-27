@@ -1,6 +1,6 @@
 # BigDataSequenceAlignment
 
-This project is a part of my PhD studies at Faculty of Mathematics, University of Belgrade. The project is big data sequence alignment cluster using CouchDB.
+This project is a part of my PhD studies in the field of Bioinformatics at Faculty of Mathematics, University of Belgrade. The project is big data sequence alignment cluster using CouchDB.
 
 Firstly, setup CouchDB to work on 2-3 nodes and create database. Very important step is to setup addresses of nodes in vm.args in couchdbx-core folder! Check addresses with ifconfig in the terminal.
 
