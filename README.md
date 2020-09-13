@@ -13,6 +13,7 @@ sudo npm install -g couchimport export COUCH_URL="http://admin:admin@192.168.0.1
 export COUCH_DATABASE="sequences_data" export COUCH_DELIMITER="," cat records_file.csv | couchimport
 
 Secondly, setup npm with:
--nano
--restify
--uuid
+
+- nano
+- restify
+- uuid
