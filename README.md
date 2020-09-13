@@ -8,9 +8,12 @@ Create a non-partitioning database within CouchDB UI.
 
 Database import is done with module: https://github.com/glynnbird/couchimport
 
-sudo npm install -g couchimport export COUCH_URL="http://admin:admin@192.168.0.13:5984"
+- sudo npm install -g couchimport 
+- export COUCH_URL="http://admin:admin@192.168.0.13:5984"
 
-export COUCH_DATABASE="sequences_data" export COUCH_DELIMITER="," cat records_file.csv | couchimport
+- export COUCH_DATABASE="sequences_data" 
+- export COUCH_DELIMITER="," 
+- cat records_file.csv | couchimport
 
 Secondly, setup npm with:
 
