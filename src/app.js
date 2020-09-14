@@ -2,8 +2,8 @@
 const { v4: uuidv4 } = require('uuid');
 
 //Database 
-const nano = require('nano')('http://admin:admin@192.168.0.13:5984/');
-const db = nano.db.use('test');
+const nano = require('nano')('http://admin:admin@192.168.0.12:5984/');
+const db = nano.db.use('test1002');
 
 const restify = require('restify');
 //CORS
@@ -104,16 +104,8 @@ server.post('/query', async (req, res, next) => {
                     emit(-max, { seq: doc.id, score: max});
                 }`,
                 reduce : `function (keys, values, rereduce) {
-                    //return values[0];
-                        const max = values[0].score;
-                        const maxI = 0;
-                        for (let i = 1; i < values.length; i += 1) {
-                          if (values[i].score > max) {
-                            max = values[i].score;
-                            maxI = i; 
-                          }
-                        }
-                        return values[0].score;
+                    return values[0]; //because they are sorted 
+                        
                     }`
         };
         console.log(doc);
@@ -129,14 +121,16 @@ server.post('/query', async (req, res, next) => {
 
 server.get('/query/:jobId', (req, res, next) => {
     const request = new Promise((resolve, reject)=>{
-        setTimeout(()=>{
+        const timer = setTimeout(()=>{
             res.send({message:"Pending..."});
             resolve();
         }, 10000);
         const id = req.params.jobId;
         //getting the view
         db.view('queries', id, function(err, body) {
+            clearTimeout(timer);
             if (!err) {
+                console.log(body);
                 resolve(body.rows);
             }
             else{
@@ -146,10 +140,10 @@ server.get('/query/:jobId', (req, res, next) => {
         });
     });
     request.then((payload)=>{
-        res.send(payload);
+        res.send({message: 'success', data: payload[0].value});
     }).catch((err)=>{
         res.status(400);
-        res.send(err)
+        res.send({message: err.message});
     });
     next();
 })
@@ -157,3 +151,4 @@ server.get('/query/:jobId', (req, res, next) => {
 server.listen(8080, function() {
   console.log('%s listening at %s', server.name, server.url);
 });
+

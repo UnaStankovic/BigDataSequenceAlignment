@@ -19,18 +19,18 @@ class App extends React.Component {
       .then((response)=>{
         console.log(response);
 
-        if (response.data.message == 'Pending...') {
+        if (response.data.message === 'Pending...') {
           console.log(response.data);
           this.timer = setTimeout(this.getResults(jobId), 5000);
         } else {
           console.log(response.data);
           this.setState({
-            result: response.data.data,
+            message: `Sequence: ${response.data.data.seq}`,
           });
         }
       })
       .catch((err)=>{
-        this.setState({message: err});
+        this.setState({message: err.message});
       })
   }
   sendQuery(){
@@ -43,7 +43,6 @@ class App extends React.Component {
       })
       .then((response)=>{
           //handle success
-          //console.log(response.data.data.jobId);
           console.log(response);
           const resData = response.data;
           console.log(resData);
@@ -54,11 +53,6 @@ class App extends React.Component {
           }else{
             this.setState({message:resData.message});
           }
-          
-          //setInterval 10 sec 
-          //get rrsponse ruta 
-          //response not pending - ubija interval 
-          //set
       })
       .catch(function (response) {
           //handle error
