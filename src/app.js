@@ -1,13 +1,13 @@
 //start with node app in terminal
 const { v4: uuidv4 } = require('uuid');
 
-//Database 
+//Database
+//here the address and the database name should be changed
 const nano = require('nano')('http://admin:admin@192.168.0.12:5984/');
 const db = nano.db.use('test1002');
 
 const restify = require('restify');
 //CORS
-
 const corsMiddleware = require('restify-cors-middleware');
 
 const cors = corsMiddleware({
@@ -56,11 +56,13 @@ server.post('/query', async (req, res, next) => {
             views: {}
         };
         try {
+            //this defines views over database
             doc = await db.get('_design/queries');
         } catch(err) {
             
         }
-        //function for sequence alignment, using map
+        //function for local sequence alignment, MAP
+        //each time generates new view on the database
         doc.views[query_id] = {
             map: `function (doc) {
                 var querySequence = "${querySequence}";
@@ -100,12 +102,10 @@ server.post('/query', async (req, res, next) => {
                         }
                     }
                 }
-                    //emit(-max, doc.id);
                     emit(-max, { seq: doc.id, score: max});
                 }`,
                 reduce : `function (keys, values, rereduce) {
                     return values[0]; //because they are sorted 
-                        
                     }`
         };
         console.log(doc);

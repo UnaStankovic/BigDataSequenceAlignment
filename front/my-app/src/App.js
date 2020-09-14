@@ -13,7 +13,6 @@ class App extends React.Component {
       result: null,
     }
   }
-
   getResults(jobId){
       axios.get(`http://localhost:8080/query/${jobId}`)
       .then((response)=>{
